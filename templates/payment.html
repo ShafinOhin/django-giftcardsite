@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+
+<!--Main layout-->
+<main>
+  <div class="container wow fadeIn">
+
+    <!-- Heading -->
+    <h2 class="my-5 h2 text-center">Payment</h2>
+
+    <!--Grid row-->
+    <div class="row">
+
+      <!--Grid column-->
+      <div class="col-md-8 mb-4">
+
+        <!--Card-->
+        <div class="card">
+
+
+          <!-- <form>
+            {% csrf_token %}
+            {{form|crispy}}
+            <button class="btn btn-primary" type="submit">Checkout</button>
+          </form> -->
+          <!-- <p>{{payment_option}}</p> -->
+          <form method="POST" class="card-body">
+
+            {% csrf_token %}
+            <!--address-->
+            <div class="md-form mb-5">
+              <!-- <input type="text" id="address" class="form-control" placeholder="1234 Main St"> -->
+              {{form.phone}}
+              <p class="font-small font-weight-lighter">*enter the mobile number through which you paid</p>
+              <label for="{{form.phone.auto_id}}" class="">Mobile Number</label>
+            </div>
+
+
+            <!--address-2-->
+            <div class="md-form mb-5">
+              <!-- <input type="text" id="address-2" class="form-control" placeholder="Apartment or suite"> -->
+              {{form.trxid}}
+              <label for="{{form.trxid.auto_id}}" class="">Bkash Transaction ID</label>
+            </div>
+
+
+
+            <button class="btn btn-primary btn-lg btn-block" type="submit">SUBMIT</button>
+
+          </form>
+
+        </div>
+        <!--/.Card-->
+
+      </div>
+      <!--Grid column-->
+      {% include "promo_snippet.html" %}
+      <!--Grid column-->
+      {% block promo_block %}
+      {% endblock %}
+      <!--Grid column-->
+
+    </div>
+    <!--Grid row-->
+
+  </div>
+</main>
+<!--Main layout-->
+
+{% endblock content %}
