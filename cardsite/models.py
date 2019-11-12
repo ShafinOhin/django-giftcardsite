@@ -2,6 +2,27 @@ from django.db import models
 from django.conf import settings
 from django.shortcuts import reverse
 
+
+class Card(models.Model):
+    active = models.BooleanField(default=True)
+    code = models.CharField(max_length=30)
+    description = models.TextField(blank=True)
+    title = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.title
+
+
+class UsedCard(models.Model):
+    active = models.BooleanField(default=False)
+    code = models.CharField(max_length=30)
+    description = models.TextField()
+    title = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.title
+
+
 CATAGORY_CHOICES = (
     ('GP', 'Google Play'),
     ('AM', 'AMAZON'),
@@ -10,21 +31,18 @@ CATAGORY_CHOICES = (
     ('ST', 'STEAM')
 )
 
-LABEL_CHOICES = (
-    ('P', 'primary'),
-    ('S', 'secondary'),
-    ('D', 'danger')
-)
+
 
 class Item(models.Model):
     title = models.CharField(max_length=100)
     price = models.FloatField()
     discount_price = models.FloatField(blank=True, null=True)
     catagory = models.CharField(choices=CATAGORY_CHOICES, max_length=2)
-    label = models.CharField(choices=LABEL_CHOICES, max_length=1)
+    iscode = models.BooleanField(default=True)
     slug = models.SlugField()
     description = models.TextField()
     image = models.ImageField(upload_to='pics')
+    gift_cards = models.ManyToManyField(Card, blank=True)
 
     def __str__(self):
         return self.title
@@ -41,6 +59,31 @@ class Item(models.Model):
         return reverse('cardsite:remove-from-cart', kwargs={
             'slug': self.slug
         })
+
+
+    def getAvail(self):
+        return self.gift_cards.all().count()
+
+
+    def isAvail(self):
+        if self.gift_cards.all():
+            return True
+        else:
+            return False
+
+
+    def get_label_text(self):
+        if self.isAvail():
+            return 'In stock'
+        else:
+            return 'Sold out'
+    
+
+    def get_label_color(self):
+        if self.isAvail():
+            return 'primary'
+        else:
+            return 'danger'
 
 class OrderItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -78,6 +121,7 @@ class Order(models.Model):
     billing_address = models.ForeignKey('BillingAddress', on_delete=models.SET_NULL, blank=True, null=True)
     payment = models.ForeignKey('Payment', on_delete=models.SET_NULL, blank=True, null=True)
     coupon = models.ForeignKey('Coupon', on_delete=models.SET_NULL, blank=True, null=True)
+    final_cards = models.ManyToManyField(UsedCard, blank=True)
 
     def __str__(self):
         return self.user.username
@@ -87,28 +131,35 @@ class Order(models.Model):
         total = 0
         for order_item in self.items.all():
             total = total + order_item.get_final_price()
-        if self.coupon.lessen == 0:
-            total -= ((self.coupon.percent * total)/100)
-        else:
-            total -= self.coupon.lessen
+        if self.coupon:
+            if self.coupon.lessen == 0:
+                total -= ((self.coupon.percent * total)/100)
+            else:
+                total -= self.coupon.lessen
         return float(int(total))
     
 
     def get_discount(self):
         total = 0
+        ret = 0
         for order_item in self.items.all():
             total = total + order_item.get_final_price()
-        if self.coupon.lessen == 0:
-            return ((self.coupon.percent * total)/100)
-        else:
-            return self.coupon.lessen
+        if self.coupon:
+            if self.coupon.lessen == 0:
+                ret = ((self.coupon.percent * total)/100)
+            else:
+                ret = self.coupon.lessen
 
+        return ret
+    
 
+    def get_order_no(self):
+        return str(self.id)[::-1] + self.user.username[::-1].upper()
 
 
 class BillingAddress(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    email = models.EmailField()
+    email = models.EmailField(blank=True)
     phone = models.CharField(max_length=11, default=None)
 
 
@@ -133,8 +184,11 @@ class Coupon(models.Model):
     date_from = models.DateTimeField()
     date_to = models.DateTimeField()
     is_active = models.BooleanField(default=True)
-    used_by = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    used_by = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
     oneuse = models.BooleanField(default=True)
 
     def __str__(self):
         return self.code
+
+
+

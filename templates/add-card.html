@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+
+
+<main>
+  <div class="container wow fadeIn">
+
+    <form action="{% url 'cardsite:add-card' %}" method="POST">
+        {% csrf_token %}
+        {{form|crispy}}
+        <input type="submit" name="submit" id="submit">
+    </form>
+
+  </div>
+</main>
+
+{% endblock content %}

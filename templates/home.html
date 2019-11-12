@@ -64,13 +64,13 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Shirts</a>
+              <a class="nav-link" href="{% url 'cardsite:googleplay' %}">Google Play</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Sport wears</a>
+              <a class="nav-link" href="{% url 'cardsite:amazon' %}">Amazon</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Outwears</a>
+              <a class="nav-link" href="{% url 'cardsite:netflix' %}">Netflix</a>
             </li>
 
           </ul>
@@ -114,19 +114,21 @@
               <!--Card content-->
               <div class="card-body text-center">
                 <!--Category & Title-->
+                {% if item.iscode == False %}
                 <a href="" class="grey-text">
                   <h5>{{item.get_catagory_display}}</h5>
                 </a>
+                {% endif %}
                 <h5>
                   <strong>
                     <a href="{{item.get_absolute_url}}" class="dark-grey-text">{{item.title}}
-                      <span class="badge badge-pill {{item.get_label_display}}-color">NEW</span>
+                      <span class="badge badge-pill {{item.get_label_color}}-color">{{item.get_label_text}}</span>
                     </a>
                   </strong>
                 </h5>
 
                 <h4 class="font-weight-bold blue-text">
-                  <strong>$ 
+                  <strong>৳  
                     {% if item.discount_price %}
                     {{item.discount_price}}
                     {% else %}
@@ -134,12 +136,18 @@
                     {% endif %}
                   </strong>
                 </h4>
+                {% if item.isAvail %}
+                <a href="{{item.get_add_to_cart_url}}" class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
+                  <i class="fas fa-shopping-cart ml-1"></i>
+                </a>
+                {% endif %}
 
               </div>
               <!--Card content-->
 
             </div>
             <!--Card-->
+          
 
           </div>
           {% endfor %}

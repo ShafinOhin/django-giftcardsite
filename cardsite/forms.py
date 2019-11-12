@@ -11,11 +11,11 @@ PAYMENT_CHOICES = (
 
 class CheckoutForm(forms.Form):
     #streetAddress = forms.CharField()
-    email = forms.EmailField(widget=forms.EmailInput(attrs={
+    email = forms.EmailField(required=False, widget=forms.EmailInput(attrs={
         'placeholder' : ''
     }))
-    phone = forms.CharField(required=False, widget=forms.TextInput(attrs={
-        'placeholder': '01XXXXXXXXXXX',
+    phone = forms.CharField(required=True, widget=forms.TextInput(attrs={
+        'placeholder': '01XXXXXXXXX',
         
     }))
     #apartmentAddress = forms.CharField(required=False)
@@ -43,3 +43,10 @@ class CouponForm(forms.Form):
         'area-label' : "Recipient's username",
         'aria-describedby' : 'basic-addon2'
     }))
+
+
+
+class cardAdder(forms.Form):
+    iden = forms.IntegerField()
+    codes = forms.CharField()
+    title = forms.CharField() 

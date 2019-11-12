@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style type="text/css">
+    html,
+    body,
+    header,
+    .carousel {
+        height: 60vh;
+    }
+
+    @media (max-width: 740px) {
+
+        html,
+        body,
+        header,
+        .carousel {
+            height: 100vh;
+        }
+    }
+
+    @media (min-width: 800px) and (max-width: 850px) {
+
+        html,
+        body,
+        header,
+        .carousel {
+            height: 100vh;
+        }
+    }
+</style>
+
+
+
+
+<!--Main layout-->
+<main>
+    
+
+    <div class="container">
+       
+
+        <div class="table-responsive">
+
+            {% for order in orders %}
+            <h4>Order No: {{order.get_order_no}} </h4>
+            <p class="font-weight-light font-small">Ordered date: {{order.ordered_date}}</p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Code Title</th>
+                        <th scope="col">Code</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for card in order.final_cards.all %}
+                    <tr>
+                        <th scope="row">{{forloop.counter }}</th>
+                        <td>{{card.title}}</td>
+                        <td>{{card.code}}</td>
+                       
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">No Order history</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <a class='btn btn-primary float-right ' href="/">Continue Shopping</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+            {% endfor %}
+        </div>
+
+
+    </div>
+
+
+</main>
+<!--Main layout-->
+
+
+{% endblock content %}
