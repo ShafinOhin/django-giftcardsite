@@ -22,6 +22,7 @@ urlpatterns = [
     path('', include('cardsite.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
+    path('encode', include('encoder.urls'))
 ]
 
 

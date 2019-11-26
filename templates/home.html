@@ -1,6 +1,9 @@
 
 
 {% extends 'base.html' %}
+{% block head_title %}
+Home
+{% endblock %}
 
 {% block content %}
 
@@ -163,7 +166,7 @@
       <!--Section: Products v.3-->
 
       {% if is_paginated %}
-      <nav class="d-flex justify-content-center wow fadeIn">
+      <nav class="d-flex justify-content-center wow fadeIn" style="padding-bottom: 50px;">
         <ul class="pagination pg-blue">
 
           {% if page_obj.has_previous %}

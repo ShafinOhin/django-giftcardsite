@@ -40,7 +40,7 @@ class order_summary_view(LoginRequiredMixin, View):
         return render(self.request, 'order-summary.html', context)
 
 
-class CheckoutView(View):
+class CheckoutView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         form = CheckoutForm()
         try:
@@ -94,7 +94,7 @@ class CheckoutView(View):
             return redirect("cardsite:order-summary")
 
 
-class PaymentView(View):
+class PaymentView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         form = PaymentForm()
         try:
@@ -295,28 +295,13 @@ class ApplyCoupon(View):
 API_KEY = "531f02ccc598147c821638bc8069f45d-1df6ec32-dbfa264b"
 
 
-def get_random_name(N):
-    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(N))
-
-
-def add_template(text, ranname):
+def send_template_message(toemail, subject, text):
     return requests.post(
-        "https://api.mailgun.net/v3/sandboxe6ed74d1a548431e98031cbdd994b1e2.mailgun.org/templates",
-        auth=("api", API_KEY),
-        data={'template': text,
-              'name': ranname,
-              'description': 'Sample template'})
-
-
-
-
-def send_template_message(toemail, subject, nname):
-    return requests.post(
-        "https://api.mailgun.net/v3/sandboxe6ed74d1a548431e98031cbdd994b1e2.mailgun.org/messages",
-        auth=("api", API_KEY),data={"from": "GiftCardCode <mailgun@sandboxe6ed74d1a548431e98031cbdd994b1e2.mailgun.org>",
+        "https://api.mailgun.net/v3/mail.gamecard.codes/messages",
+        auth=("api", API_KEY),data={"from": "GiftCardCode <mailgun@mail.gamecard.codes>",
         "to": toemail,
         "subject": subject,
-        "template": nname
+        "html" : text
         })
 
 
@@ -337,40 +322,19 @@ def show_code(request):
 
 def send_mail_of_last_order(request):
     try:
-        nname = get_random_name(12)
-        addTemplate(request, nname)
         order = Order.objects.filter(user=request.user, ordered = True).order_by('-id')[0]
+        context = {
+                'order' : order
+            }
+        text = ' '.join(str(render(request, 'email_view.html', context).content).replace('\\n', ' ').split())[2:]
         tomail = order.billing_address.email
-        subject = 'Gift Card Code'
-        send_template_message(tomail, subject, nname)
+        subject = 'order ' + order.get_order_no()
+        send_template_message(tomail, subject, text)
 
     except ObjectDoesNotExist:
-        messages.warning(request, "OOOPss! Sorry, some system failure occured")
-        messages.warning(request, 'You will be contacted soon, Don\'t worry')
+        messages.warning(request, "some system failure occured")
+        messages.warning(request, 'Contact me if ordered code now showing')
         return redirect('cardsite:item-list')
-
-
-
-
-
-def addTemplate(request, nname):
-    order = Order.objects.filter(user=request.user, ordered = True).order_by('-id')[0]
-    context = {
-            'order' : order
-        }
-    text = ' '.join(str(render(request, 'email_view.html', context).content).replace('\\n', ' ').split())
-    add_template(text, nname)
-
-
-
-def justPrint(request):
-    #text = ' '.join(str(render(request, 'email_view.html').content).replace('\\n', ' ').split())
-    order = Order.objects.filter(user=request.user, ordered = True).order_by('-id')[0]
-    orderjson = serializers.serialize('json', order.final_cards.all())
-    orderjson = "{ \"orderjson\": "  + orderjson + " }"
-    print(orderjson)
-    return render(request, 'item-list.html')
-
 
 
 
@@ -421,3 +385,6 @@ def netflix(request):
         'object_list' : object_list
     }
     return render(request, 'home.html', context)
+
+
+

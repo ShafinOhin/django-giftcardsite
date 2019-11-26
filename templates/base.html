@@ -19,6 +19,8 @@
         <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
     </head>
     <body>
+  <div class='container-my' style="position:relative; min-height: 100vh;"> 
+    <div class='content-wrap' style="padding-bottom: ;">
           <!-- Navbar -->
   <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
         <div class="container">
@@ -41,7 +43,7 @@
             <ul class="navbar-nav mr-auto">
                
               {% if user.is_authenticated %}
-              <li class="nav-item ">
+              <li class="nav-item">
                 <a class="nav-link waves-effect btn btn-outline-secondary" href="{% url 'cardsite:mycode' %}" >Order Hostory</a>
               </li>
               {% endif %}
@@ -103,16 +105,17 @@
 
         {% block extra_body %}
         {% endblock %}
-
+</div>
         <!--Footer-->
-  <footer class="page-footer text-center font-small mt-4 wow fadeIn">
+  
+  <footer class="page-footer text-center font-small col-12 position-absolute fadeIn" style="height:3.5rem">
 
     
 
-    <hr class="my-4">
+    <!-- <hr class="my-4"> -->
 
     <!-- Social icons -->
-    <div class="pb-4">
+    <!-- <div class="pb-4">
       <a href="https://www.facebook.com/shafinohin" target="_blank">
         <i class="fab fa-facebook-f mr-3"></i>
       </a>
@@ -126,18 +129,31 @@
       </a>
 
       
-    </div>
+    </div> -->
     <!-- Social icons -->
 
     <!--Copyright-->
     <div class="footer-copyright py-3">
       © 2019 Copyright:
       <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank"> MDBootstrap.com </a>
+      &nbsp; &nbsp; &nbsp;
+      <a href="https://www.facebook.com/shafinohin" target="_blank">
+        <i class="fab fa-facebook-f mr-3"></i>
+      </a>
+
+      <a href="https://twitter.com/shafinohin" target="_blank">
+        <i class="fab fa-twitter mr-3"></i>
+      </a>
+
+      <a href="https://www.youtube.com/channel/UCIDSjI-vFcKr-RLyyj061tg" target="_blank">
+        <i class="fab fa-youtube mr-3"></i>
+      </a>
     </div>
     <!--/.Copyright-->
 
   </footer>
   <!--/.Footer-->
+</div>
 
 
   <!-- SCRIPTS -->

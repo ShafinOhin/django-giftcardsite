@@ -10,13 +10,11 @@ from .views import (
     order_summary_view,
     ApplyCoupon,
     send_mail_of_last_order,
-    show_code,
-    justPrint,
-    addTemplate,
+    show_code,\
     AddCard,
     googleplay,
     amazon,
-    netflix
+    netflix,
     )
 
 app_name = 'cardsite'
@@ -36,5 +34,5 @@ urlpatterns = [
     path('remove-single-item-from-cart/<slug>/', remove_single_item_from_cart, name='remove-single-item-from-cart'),
     path('remove-from-cart/<slug>/', remove_from_cart, name='remove-from-cart'),
     path('payment/<payment_option>/', PaymentView.as_view(), name='payment'),
-    path('sendamail', send_mail_of_last_order, name='sendamail')
+    path('sendamail', send_mail_of_last_order, name='sendamail'),
 ]
